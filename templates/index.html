@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Calculadora CO2</title>
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <h2>Calculadora de Huella de Carbono</h2>
+            <select id="transporte">
+                <option value="0.21">Automóvil (0.21 kg CO₂/km)</option>
+                <option value="0.05">Autobús (0.05 kg CO₂/km)</option>
+                <option value="0.15">Motocicleta (0.15 kg CO₂/km)</option>
+                <option value="0">Bicicleta / Caminando (0 kg CO₂)</option>
+            </select>
+            <input type="number" id="kilometros" placeholder="Kilómetros recorridos" min="0">
+            <button onclick="calcularCarbono()">Calcular Huella</button>
+
+            <div id="resultado"></div>
+        </div>
+
+        <script>
+            function calcularCarbono() {
+                const factor = parseFloat(document.getElementById("transporte").value);
+                const km = parseFloat(document.getElementById("kilometros").value);
+
+                if (isNaN(km) || km < 0) {
+                    document.getElementById("resultado").innerText = "Ingresa una distancia válida.";
+                    return;
+                }
+
+                const total = factor * km;
+                document.getElementById("resultado").innerText = 
+                    `Tu huella de carbono estimada es de ${total.toFixed(2)} kg de CO₂.`;
+            }
+        </script>
+    </body>
+</html>
