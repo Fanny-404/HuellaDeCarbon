@@ -1,41 +1,54 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Calculadora CO2</title>
-        <link rel="stylesheet" href="/static/style.css">
-    </head>
-
-    <body>
-        <div class="container">
+<head>
+    <title>Calculadora CO2</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="main-wrapper">
+        <div class="left-section">
+            <img src="/static/huellaDeCarbono.png" alt="Get In Touch" class="left-image">
+            <div class="get-in-touch-text">CALCULADORA CO2</div>
+        </div>
+        <div class="right-section">
             <h1>Calculadora de Huella de Carbono</h1>
             <h2>Estefanía Hernández Meraz</h2>
+            <h3>Ingeniería en Sistemas Computacionales</h3>
+            <h3>8vo Semestre</h3>
             <h3>21550332</h3>
-            <select id="transporte">
-                <option value="0.21">Automóvil (0.21 kg CO₂/km)</option>
-                <option value="0.05">Autobús (0.05 kg CO₂/km)</option>
-                <option value="0.15">Motocicleta (0.15 kg CO₂/km)</option>
-                <option value="0">Bicicleta / Caminando (0 kg CO₂)</option>
-            </select>
-            <input type="number" id="kilometros" placeholder="Kilómetros recorridos" min="0">
+            <div class="form-group">
+                <label for="transporte">Selecciona tu medio de transporte:</label>
+                <select id="transporte">
+                    <option value="0.21">Automóvil (0.21 kg CO₂/km)</option>
+                    <option value="0.05">Autobús (0.05 kg CO₂/km)</option>
+                    <option value="0.15">Motocicleta (0.15 kg CO₂/km)</option>
+                    <option value="0">Bicicleta / Caminando (0 kg CO₂)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="kilometros">Kilómetros recorridos:</label>
+                <input type="number" id="kilometros" placeholder="Ej: 10" min="0">
+            </div>
             <button onclick="calcularCarbono()">Calcular Huella</button>
 
             <div id="resultado"></div>
         </div>
+    </div>
 
-        <script>
-            function calcularCarbono() {
-                const factor = parseFloat(document.getElementById("transporte").value);
-                const km = parseFloat(document.getElementById("kilometros").value);
+    <script>
+        function calcularCarbono() {
+            const factor = parseFloat(document.getElementById("transporte").value);
+            const km = parseFloat(document.getElementById("kilometros").value);
 
-                if (isNaN(km) || km < 0) {
-                    document.getElementById("resultado").innerText = "Ingresa una distancia válida.";
-                    return;
-                }
-
-                const total = factor * km;
-                document.getElementById("resultado").innerText = 
-                    `Tu huella de carbono estimada es de ${total.toFixed(2)} kg de CO₂.`;
+            if (isNaN(km) || km < 0) {
+                document.getElementById("resultado").innerText = "Ingresa una distancia válida.";
+                return;
             }
-        </script>
-    </body>
+
+            const total = factor * km;
+            document.getElementById("resultado").innerText =
+                `Tu huella de carbono estimada es de ${total.toFixed(2)} kg de CO₂.`;
+        }
+    </script>
+</body>
 </html>

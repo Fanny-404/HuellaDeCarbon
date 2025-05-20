@@ -2,63 +2,189 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background: #f3e8ff; /* fondo lila claro */
+    background-color: #5e35b1; /* Púrpura oscuro principal */
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    overflow: hidden; /* Oculta el overflow para las formas */
+    position: relative;
 }
 
-.container {
-    background: #ffffff;
+/* Abstract shapes in the background */
+body::before,
+body::after {
+    content: '';
+    position: absolute;
+    background-color: rgba(170, 119, 255, 0.2); /* Púrpura más claro y transparente */
+    border-radius: 50%;
+    z-index: -1;
+}
+
+body::before {
+    width: 250px;
+    height: 250px;
+    top: -50px;
+    left: -50px;
+    transform: rotate(45deg);
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+}
+
+body::after {
+    width: 300px;
+    height: 300px;
+    bottom: -80px;
+    right: -80px;
+    transform: rotate(-30deg);
+    border-radius: 60% 40% 40% 60% / 60% 60% 40% 40%;
+    background-color: rgba(142, 68, 173, 0.3); /* Otro tono de púrpura transparente */
+}
+
+
+.main-wrapper {
+    display: flex;
+    width: 90%; /* Adjust as needed */
+    max-width: 1200px; /* Max width for the entire container */
+    background-color: #ffffff; /* White background for the entire card */
+    border-radius: 15px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* Enhanced shadow */
+    overflow: hidden;
+}
+
+.left-section {
+    flex: 1; /* Takes up half the space */
+    background-color: #8a2be2; /* Blue Violet - lighter purple for the left side */
     padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(128, 0, 128, 0.1); /* sombra púrpura suave */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     text-align: center;
-    width: 400px;
+    position: relative;
+    color: white;
+    box-sizing: border-box; /* Include padding in element's total width and height */
+}
+
+/* Image on the left side */
+.left-section .left-image {
+    max-width: 100%; /* Ensure image scales */
+    height: auto;
+    margin-bottom: 20px;
+    border-radius: 10px; /* Slightly rounded corners for the image */
+}
+
+.left-section .get-in-touch-text {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-top: 20px;
+    color: white; /* White text on purple background */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.right-section {
+    flex: 1; /* Takes up the other half */
+    background-color: #4b0082; /* Indigo - darker purple for the right side */
+    padding: 40px;
+    color: #f0e6fa; /* Light purple text for contrast */
+    box-sizing: border-box; /* Include padding in element's total width and height */
+}
+
+h1, h2, h3 {
+    color: #ffffff; /* White headings */
+    margin-bottom: 10px;
 }
 
 h1 {
-    color: #6a0dad; /* púrpura oscuro */
+    font-size: 2em;
+    margin-bottom: 25px;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin-bottom: 5px;
+}
+
+h3 {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+.form-group {
     margin-bottom: 20px;
+    text-align: left; /* Align labels to the left */
 }
 
-ul {
-    list-style: none;
-    padding: 0;
-    margin-bottom: 30px;
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #d8bfd8; /* Thistle - lighter purple for labels */
 }
 
-li {
-    font-size: 18px;
-    margin: 10px 0;
-    color: #7b3fa1; /* tono morado medio */
-}
-
-select, input[type="number"], button {
-    padding: 10px;
-    margin-top: 10px;
-    width: 100%;
-    font-size: 16px;
-    border: 1px solid #d1b3ff; /* borde lavanda */
+select, input[type="number"] {
+    width: calc(100% - 20px); /* Account for padding */
+    padding: 12px;
+    margin-top: 5px;
+    border: 1px solid #9966cc; /* Medium purple border */
     border-radius: 8px;
+    background-color: #6a1b9a; /* Darker purple for input fields */
+    color: #ffffff; /* White text inside inputs */
+    font-size: 16px;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
+
+select option {
+    background-color: #6a1b9a; /* Darker purple for dropdown options */
+    color: #ffffff;
+}
+
+/* Placeholder styling */
+input::placeholder {
+    color: #d8bfd8; /* Light purple placeholder */
+    opacity: 0.8; /* Slightly transparent */
+}
+
 
 button {
-    background-color: #a259ff; /* violeta vivo */
+    background-color: #9370db; /* Medium Purple */
     color: white;
+    padding: 15px 25px;
     border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
     cursor: pointer;
-    margin-top: 20px;
-    transition: background-color 0.3s;
+    margin-top: 30px;
+    width: 100%;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
-    background-color: #9333ea; /* más oscuro al pasar el cursor */
+    background-color: #8a2be2; /* Blue Violet - slightly darker on hover */
+    transform: translateY(-2px); /* Slight lift effect */
 }
 
 #resultado {
-    margin-top: 20px;
+    margin-top: 30px;
+    font-size: 1.3em;
     font-weight: bold;
-    color: #5e35b1; /* púrpura intenso */
+    color: #ffe066; /* A contrasting color for the result, like a light yellow, for emphasis */
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle background for the result */
+    padding: 15px;
+    border-radius: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .main-wrapper {
+        flex-direction: column; /* Stack sections vertically on smaller screens */
+        width: 95%;
+    }
+
+    .left-section, .right-section {
+        padding: 30px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
 }
