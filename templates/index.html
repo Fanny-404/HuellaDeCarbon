@@ -12,6 +12,12 @@
         </div>
         <div class="right-section">
             <h1>Calculadora de Huella de Carbono</h1>
+            {% if user_name %}
+            <p style="color: #ffe066; font-size: 1.1em; margin-bottom: 15px;">
+                Bienvenido, {{ user_name }}!
+                <a href="{{ url_for('logout') }}" style="color: #d8bfd8; text-decoration: none; margin-left: 10px;">Cerrar Sesión</a>
+            </p>
+            {% endif %}
             <h2>Estefanía Hernández Meraz</h2>
             <h3>Ingeniería en Sistemas Computacionales</h3>
             <h3>8vo Semestre</h3>
@@ -26,28 +32,52 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="kilometros">Kilómetros recorridos:</label>
+                <label for="kilometros">Kilómetros recorridos a la semana:</label>
                 <input type="number" id="kilometros" placeholder="Ej: 10" min="0">
             </div>
-            <button onclick="calcularCarbono()">Calcular Huella</button>
+            <button onclick="calcularYGuardarCarbono()">Calcular y Guardar Huella Semanal</button>
 
             <div id="resultado"></div>
+            <div id="recomendacion" style="margin-top: 15px; font-size: 1.1em; color: #aaffee; background-color: rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 8px;"></div>
         </div>
     </div>
 
     <script>
-        function calcularCarbono() {
+        async function calcularYGuardarCarbono() {
             const factor = parseFloat(document.getElementById("transporte").value);
             const km = parseFloat(document.getElementById("kilometros").value);
 
             if (isNaN(km) || km < 0) {
                 document.getElementById("resultado").innerText = "Ingresa una distancia válida.";
+                document.getElementById("recomendacion").innerText = "";
                 return;
             }
 
-            const total = factor * km;
-            document.getElementById("resultado").innerText =
-                `Tu huella de carbono estimada es de ${total.toFixed(2)} kg de CO₂.`;
+            // Enviar datos al backend
+            const formData = new FormData();
+            formData.append('transporte', factor);
+            formData.append('kilometros', km);
+
+            try {
+                const response = await fetch('/calculate_and_save_carbon', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById("resultado").innerText =
+                        `Tu huella de carbono semanal estimada es de ${data.huella} kg de CO₂.`;
+                    document.getElementById("recomendacion").innerText = data.recomendacion;
+                } else {
+                    document.getElementById("resultado").innerText = `Error: ${data.message}`;
+                    document.getElementById("recomendacion").innerText = "";
+                }
+            } catch (error) {
+                document.getElementById("resultado").innerText = "Error de conexión al servidor.";
+                document.getElementById("recomendacion").innerText = "";
+                console.error("Error al enviar el cálculo:", error);
+            }
         }
     </script>
 </body>
