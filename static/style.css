@@ -188,3 +188,161 @@ button:hover {
         font-size: 1.8em;
     }
 }
+
+/* Estilos para la Ventana Modal */
+
+/* Overlay oscuro de fondo */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente oscuro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Asegura que esté por encima de todo */
+    opacity: 0; /* Inicialmente invisible */
+    visibility: hidden; /* Inicialmente oculto */
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Contenido de la ventana modal */
+.modal-content {
+    background-color: #4b0082; /* Mismo púrpura oscuro que el right-section */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    width: 90%;
+    max-width: 500px; /* Ancho máximo para el modal */
+    text-align: center;
+    color: #f0e6fa; /* Color de texto claro */
+    position: relative;
+    transform: translateY(-20px); /* Ligero desplazamiento hacia arriba */
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0); /* Vuelve a su posición normal al activarse */
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 1.8em;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 2em;
+    color: #d8bfd8;
+    cursor: pointer;
+    line-height: 1; /* Alineación del texto */
+    transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+    color: #ffffff;
+}
+
+.modal-body p {
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    line-height: 1.5;
+}
+
+.modal-body #modalHuella {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #ffe066; /* Amarillo para la huella */
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+/* Estilos de mensaje tipo "alerta" basado en la imagen */
+.modal-message {
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espacio entre el icono y el texto */
+    text-align: left;
+    font-weight: bold;
+}
+
+.modal-message .icon {
+    font-size: 2em; /* Tamaño del icono */
+    line-height: 1;
+}
+
+/* Colores para los tipos de mensaje */
+.modal-message.success {
+    background-color: #d4edda; /* Verde claro */
+    color: #155724; /* Verde oscuro */
+    border: 1px solid #c3e6cb;
+}
+.modal-message.success .icon { color: #28a745; /* Verde */ }
+
+
+.modal-message.info {
+    background-color: #d1ecf1; /* Azul claro */
+    color: #0c5460; /* Azul oscuro */
+    border: 1px solid #bee5eb;
+}
+.modal-message.info .icon { color: #17a2b8; /* Azul */ }
+
+
+.modal-message.warning {
+    background-color: #fff3cd; /* Amarillo claro */
+    color: #856404; /* Amarillo oscuro */
+    border: 1px solid #ffeeba;
+}
+.modal-message.warning .icon { color: #ffc107; /* Naranja/Amarillo */ }
+
+
+.modal-message.error {
+    background-color: #f8d7da; /* Rojo claro */
+    color: #721c24; /* Rojo oscuro */
+    border: 1px solid #f5c6cb;
+}
+.modal-message.error .icon { color: #dc3545; /* Rojo */ }
+
+/* Media Queries para responsividad del modal */
+@media (max-width: 550px) {
+    .modal-content {
+        padding: 20px;
+    }
+    .modal-header h2 {
+        font-size: 1.5em;
+    }
+    .modal-close {
+        font-size: 1.8em;
+    }
+    .modal-body #modalHuella {
+        font-size: 1.3em;
+    }
+    .modal-message {
+        font-size: 0.9em;
+        padding: 10px 15px;
+    }
+    .modal-message .icon {
+        font-size: 1.8em;
+    }
+}

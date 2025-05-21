@@ -3,25 +3,27 @@
 <head>
     <title>Calculadora CO2</title>
     <link rel="stylesheet" href="/static/style.css">
+    <style>
+        /* Puedes añadir algunos iconos simples con unicode si no quieres una librería */
+        .icon.success::before { content: '✓'; }
+        .icon.info::before { content: 'i'; }
+        .icon.warning::before { content: '⚠'; }
+        .icon.error::before { content: '✕'; }
+    </style>
 </head>
 <body>
     <div class="main-wrapper">
         <div class="left-section">
-            <img src="/static/huellaDeCarbono.png" alt="Get In Touch" class="left-image">
+            <img src="/static/huellaDeCarbono.png" alt="Huella de Carbono" class="left-image">
             <div class="get-in-touch-text">CALCULADORA CO2</div>
         </div>
         <div class="right-section">
             <h1>Calculadora de Huella de Carbono</h1>
-            {% if user_name %}
-            <p style="color: #ffe066; font-size: 1.1em; margin-bottom: 15px;">
-                Bienvenido, {{ user_name }}!
-                <a href="{{ url_for('logout') }}" style="color: #d8bfd8; text-decoration: none; margin-left: 10px;">Cerrar Sesión</a>
-            </p>
-            {% endif %}
             <h2>Estefanía Hernández Meraz</h2>
             <h3>Ingeniería en Sistemas Computacionales</h3>
             <h3>8vo Semestre</h3>
             <h3>21550332</h3>
+
             <div class="form-group">
                 <label for="transporte">Selecciona tu medio de transporte:</label>
                 <select id="transporte">
@@ -35,25 +37,59 @@
                 <label for="kilometros">Kilómetros recorridos a la semana:</label>
                 <input type="number" id="kilometros" placeholder="Ej: 10" min="0">
             </div>
-            <button onclick="calcularYGuardarCarbono()">Calcular y Guardar Huella Semanal</button>
+            <button onclick="calcularYMostrarCarbono()">Calcular Huella Semanal</button>
 
-            <div id="resultado"></div>
-            <div id="recomendacion" style="margin-top: 15px; font-size: 1.1em; color: #aaffee; background-color: rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 8px;"></div>
+            </div>
+    </div>
+
+    <div id="carbonModalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Resultado del Cálculo</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Tu huella de carbono semanal estimada es de <span id="modalHuella"></span> kg de CO₂.</p>
+                <div id="modalRecommendationMessage" class="modal-message">
+                    <span id="modalRecommendationIcon" class="icon"></span>
+                    <span id="modalRecommendationText"></span>
+                </div>
+                <button style="margin-top: 25px;" onclick="closeModal()">Entendido</button>
+            </div>
         </div>
     </div>
 
     <script>
-        async function calcularYGuardarCarbono() {
+        // Obtenemos referencias a los elementos del modal
+        const modalOverlay = document.getElementById('carbonModalOverlay');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalHuella = document.getElementById('modalHuella');
+        const modalRecommendationMessage = document.getElementById('modalRecommendationMessage');
+        const modalRecommendationIcon = document.getElementById('modalRecommendationIcon');
+        const modalRecommendationText = document.getElementById('modalRecommendationText');
+
+        async function calcularYMostrarCarbono() {
             const factor = parseFloat(document.getElementById("transporte").value);
             const km = parseFloat(document.getElementById("kilometros").value);
 
+            // Restablecer el estado inicial del modal
+            modalTitle.innerText = "Resultado del Cálculo";
+            modalHuella.innerText = "";
+            modalRecommendationMessage.className = 'modal-message'; // Limpiar clases anteriores
+            modalRecommendationIcon.innerText = '';
+            modalRecommendationText.innerText = '';
+
             if (isNaN(km) || km < 0) {
-                document.getElementById("resultado").innerText = "Ingresa una distancia válida.";
-                document.getElementById("recomendacion").innerText = "";
+                // Manejar error de entrada directamente en el modal
+                modalTitle.innerText = "Error de Entrada";
+                modalHuella.innerText = ""; // Limpiar huella si hay error
+                modalRecommendationMessage.className = 'modal-message error';
+                modalRecommendationIcon.innerText = '✕'; // Icono de error
+                modalRecommendationText.innerText = "Por favor, ingresa una distancia válida.";
+                openModal();
                 return;
             }
 
-            // Enviar datos al backend
             const formData = new FormData();
             formData.append('transporte', factor);
             formData.append('kilometros', km);
@@ -66,19 +102,71 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    document.getElementById("resultado").innerText =
-                        `Tu huella de carbono semanal estimada es de ${data.huella} kg de CO₂.`;
-                    document.getElementById("recomendacion").innerText = data.recomendacion;
+                    modalHuella.innerText = `${data.huella}`; // Solo el número, el "kg de CO2" está en el HTML fijo
+                    modalRecommendationText.innerText = data.recomendacion;
+
+                    // Asignar clase de estilo al mensaje según la huella o el tipo de recomendación
+                    let messageType = 'info'; // Por defecto, es 'info'
+                    const huella = parseFloat(data.huella); // Convertir a número para la lógica
+
+                    if (huella === 0) {
+                        messageType = 'success'; // Excelente
+                    } else if (huella <= 3) {
+                        messageType = 'info'; // Sigue optando, buen consejo
+                    } else if (huella <= 10) {
+                        messageType = 'warning'; // Considera, una advertencia leve
+                    } else {
+                        messageType = 'error'; // Huella alta, un mensaje de "acción requerida"
+                    }
+
+                    modalRecommendationMessage.className = `modal-message ${messageType}`;
+                    // Asignar el icono según el tipo de mensaje
+                    if (messageType === 'success') { modalRecommendationIcon.innerText = '✓'; }
+                    else if (messageType === 'info') { modalRecommendationIcon.innerText = 'i'; }
+                    else if (messageType === 'warning') { modalRecommendationIcon.innerText = '⚠'; }
+                    else if (messageType === 'error') { modalRecommendationIcon.innerText = '✕'; }
+
+                    openModal(); // Mostrar el modal con los resultados
                 } else {
-                    document.getElementById("resultado").innerText = `Error: ${data.message}`;
-                    document.getElementById("recomendacion").innerText = "";
+                    // Si el backend devuelve un error
+                    modalTitle.innerText = "Error del Servidor";
+                    modalHuella.innerText = "";
+                    modalRecommendationMessage.className = 'modal-message error';
+                    modalRecommendationIcon.innerText = '✕';
+                    modalRecommendationText.innerText = `Ocurrió un error: ${data.message}`;
+                    openModal();
+                    console.error("Error del servidor:", data.message);
                 }
             } catch (error) {
-                document.getElementById("resultado").innerText = "Error de conexión al servidor.";
-                document.getElementById("recomendacion").innerText = "";
+                // Si hay un error de conexión
+                modalTitle.innerText = "Error de Conexión";
+                modalHuella.innerText = "";
+                modalRecommendationMessage.className = 'modal-message error';
+                modalRecommendationIcon.innerText = '✕';
+                modalRecommendationText.innerText = "No se pudo conectar al servidor. Inténtalo de nuevo.";
+                openModal();
                 console.error("Error al enviar el cálculo:", error);
             }
         }
+
+        function openModal() {
+            modalOverlay.classList.add('active');
+            // Opcional: deshabilitar el scroll del body
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+            // Opcional: habilitar el scroll del body
+            document.body.style.overflow = '';
+        }
+
+        // Permitir cerrar el modal haciendo clic fuera de él
+        modalOverlay.addEventListener('click', function(event) {
+            if (event.target === modalOverlay) {
+                closeModal();
+            }
+        });
     </script>
 </body>
 </html>
